@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+.env
+.git
+.DS_Store
+cache/*.png
+cache/*.json
+uploads/*
+README.md

@@ -98,6 +98,27 @@ Without a `.env` file, the server fallback port is `9595`, so open `http://local
 
 Do **not** open `public/index.html` directly with `file://`; this application requires the Node backend.
 
+## Deploy to Render with Docker
+
+This repository includes a `Dockerfile` based on the official Playwright image. Render installs Node dependencies, Chromium, and the required browser libraries during the Docker build, so Playwright does not need to be installed separately on the Render server.
+
+### Deploy from GitHub
+
+1. Push this folder to a GitHub repository.
+2. In Render, choose **New +** and then **Blueprint**.
+3. Select the repository. Render detects `render.yaml` and creates the web service.
+4. Deploy the service and open the generated `onrender.com` URL.
+
+You can also choose **New Web Service**, select **Docker**, and deploy directly from the repository. The start command is already defined in the Docker image.
+
+Render provides the `PORT` environment variable automatically. The application listens on `0.0.0.0` and exposes `/health` for Render health checks.
+
+### Cache persistence on Render
+
+The snapshot cache is stored in `/app/cache`. A normal Render filesystem is ephemeral, so cached PNGs can be lost when the service is redeployed or restarted. If snapshots must survive deployments, attach a Render persistent disk mounted at `/app/cache` on a plan that supports disks. Without a persistent disk, the application still works; it simply captures URLs again after the cache is removed.
+
+The uploaded workbook is temporary and is deleted after parsing. It is never stored in the image or cache.
+
 ## How to use
 
 1. Start the Node server.
@@ -123,6 +144,7 @@ All endpoints are served by the same Node application.
 | `POST /api/session/:sessionId/select` | Accepts JSON `{ "sheet": "Sheet1", "columnIndex": 2 }`, validates that column, and replaces the session links without another upload. |
 | `GET /api/session/:sessionId/render/:index` | Renders or retrieves one record and returns its cached PNG URL and metadata. |
 | `GET /api/cache/status` | Returns the number of PNG snapshots currently stored in `cache/`. |
+| `DELETE /api/cache` | Deletes all generated PNG and JSON cache files. |
 
 The render endpoint is intentionally server-side. Playwright opens the allowed URL once, captures a full-page PNG, and subsequent requests reuse that file. This avoids keeping many live pages or iframes open in the browser, prevents navigation from reloading earlier records, and makes the gallery usable for large workbooks.
 

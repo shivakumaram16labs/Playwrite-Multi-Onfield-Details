@@ -50,6 +50,10 @@ app.use('/snapshots', express.static(CACHE_DIR, {
 }));
 app.use(express.static(PUBLIC_DIR));
 
+app.get('/health', (_req, res) => {
+  res.json({ ok: true });
+});
+
 let browserPromise = null;
 const renderJobs = new Map();
 let cacheClearPromise = null;
