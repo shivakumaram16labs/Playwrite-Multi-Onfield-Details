@@ -243,6 +243,8 @@ RENDER_TIMEOUT_MS=60000
 POST_LOAD_WAIT_MS=2000
 ```
 
+The renderer starts from the committed response and treats `domcontentloaded` and `networkidle` as best-effort waits. This allows pages that keep loading background resources open to still produce a snapshot.
+
 ### Snapshot is stale
 
 That is intentional. The project follows **render once and never reload** semantics.

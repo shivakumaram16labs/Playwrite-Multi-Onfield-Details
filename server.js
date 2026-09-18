@@ -272,13 +272,22 @@ async function renderSnapshot(rawUrl) {
     const startedAt = Date.now();
 
     try {
+      // Some target pages keep document loading open indefinitely. Commit is
+      // enough to obtain the response; later load states are best-effort.
       const response = await page.goto(url, {
-        waitUntil: 'domcontentloaded',
+        waitUntil: 'commit',
         timeout: RENDER_TIMEOUT_MS
       });
       status = response ? response.status() : null;
 
       // Give client-side apps time to finish painting.
+      try {
+        await page.waitForLoadState('domcontentloaded', {
+          timeout: Math.min(15000, RENDER_TIMEOUT_MS)
+        });
+      } catch {
+        // Capture the committed page even if document loading remains open.
+      }
       try {
         await page.waitForLoadState('networkidle', { timeout: Math.min(8000, RENDER_TIMEOUT_MS) });
       } catch {
