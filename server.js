@@ -475,7 +475,7 @@ app.use((err, _req, res, _next) => {
   res.status(status).json({ error: err.message || 'Unexpected server error.' });
 });
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`On-field Snapshot Gallery running at http://localhost:${PORT}`);
   console.log(`Allowed host: ${ALLOWED_HOST}`);
 });
