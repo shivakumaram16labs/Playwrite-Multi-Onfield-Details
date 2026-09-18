@@ -109,6 +109,8 @@ This repository includes a `Dockerfile` based on the official Playwright image. 
 3. Select the repository. Render detects `render.yaml` and creates the web service.
 4. Deploy the service and open the generated `onrender.com` URL.
 
+The included Blueprint sets `plan: free`, so no paid plan selection is required.
+
 You can also choose **New Web Service**, select **Docker**, and deploy directly from the repository. The start command is already defined in the Docker image.
 
 Render provides the `PORT` environment variable automatically. The application listens on `0.0.0.0` and exposes `/health` for Render health checks.
@@ -116,6 +118,8 @@ Render provides the `PORT` environment variable automatically. The application l
 ### Cache persistence on Render
 
 The snapshot cache is stored in `/app/cache`. A normal Render filesystem is ephemeral, so cached PNGs can be lost when the service is redeployed or restarted. If snapshots must survive deployments, attach a Render persistent disk mounted at `/app/cache` on a plan that supports disks. Without a persistent disk, the application still works; it simply captures URLs again after the cache is removed.
+
+On the free plan, the service can spin down after inactivity and may be slower on the first request after it wakes. Free services also have limited memory and ephemeral storage, so use the **Delete cache** button periodically if many large screenshots accumulate.
 
 The uploaded workbook is temporary and is deleted after parsing. It is never stored in the image or cache.
 

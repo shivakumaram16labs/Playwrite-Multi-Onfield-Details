@@ -2,6 +2,7 @@ services:
   - type: web
     name: onfield-snapshot-gallery
     runtime: docker
+    plan: free
     healthCheckPath: /health
     envVars:
       - key: ALLOWED_HOST
