@@ -109,7 +109,9 @@ This repository includes a `Dockerfile` based on the official Playwright image. 
 3. Select the repository. Render detects `render.yaml` and creates the web service.
 4. Deploy the service and open the generated `onrender.com` URL.
 
-The included Blueprint sets `plan: free` and deploys in the Singapore region, which is geographically closer to the Karnataka target host. No paid plan selection is required.
+The included Blueprint sets `plan: free` and deploys in the Singapore region, which is geographically closer to the Karnataka target host. No paid plan selection is required. The browser uses India locale (`en-IN`), India Standard Time, and Bengaluru geolocation.
+
+Render does not currently offer an India deployment region. Browser locale and geolocation do not change the server's public IP address. If the target website allows only Indian IP addresses, the application must run on an India-hosted server or through an approved India-based proxy, such as an AWS Mumbai or DigitalOcean Bengaluru server.
 
 You can also choose **New Web Service**, select **Docker**, and deploy directly from the repository. The start command is already defined in the Docker image.
 
