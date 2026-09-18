@@ -3,6 +3,7 @@ services:
     name: onfield-snapshot-gallery
     runtime: docker
     plan: free
+    region: singapore
     healthCheckPath: /health
     envVars:
       - key: ALLOWED_HOST

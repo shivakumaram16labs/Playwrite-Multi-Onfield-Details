@@ -109,7 +109,7 @@ This repository includes a `Dockerfile` based on the official Playwright image. 
 3. Select the repository. Render detects `render.yaml` and creates the web service.
 4. Deploy the service and open the generated `onrender.com` URL.
 
-The included Blueprint sets `plan: free`, so no paid plan selection is required.
+The included Blueprint sets `plan: free` and deploys in the Singapore region, which is geographically closer to the Karnataka target host. No paid plan selection is required.
 
 You can also choose **New Web Service**, select **Docker**, and deploy directly from the repository. The start command is already defined in the Docker image.
 

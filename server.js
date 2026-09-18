@@ -251,7 +251,8 @@ async function renderSnapshot(rawUrl) {
     const browser = await getBrowser();
     const context = await browser.newContext({
       viewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT },
-      ignoreHTTPSErrors: false,
+      userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+      ignoreHTTPSErrors: true,
       serviceWorkers: 'block'
     });
 
