@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>On-field Snapshot Gallery</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="toolbar">
+    <div class="brand"><span class="brand-badge">OG</span><strong>On-field Snapshot Gallery</strong></div>
+
+    <label class="upload-button">
+      Upload Excel
+      <input id="fileInput" type="file" accept=".xlsx,.xls,.xlsm,.csv,.tsv" hidden />
+    </label>
+
+    <div id="workbookControls" class="toolbar-group" hidden>
+      <label>Sheet
+        <select id="sheetSelect" aria-label="Excel sheet"></select>
+      </label>
+      <label>Link column
+        <select id="columnSelect" aria-label="Column used for links"></select>
+      </label>
+      <button id="applyColumnBtn" type="button">Apply</button>
+    </div>
+
+    <button id="prevBtn" disabled>Previous</button>
+    <div id="counter" class="counter">0 / 0</div>
+    <button id="nextBtn" disabled>Next</button>
+
+    <label class="compact-field">
+      Preload ahead
+      <input id="preloadInput" type="number" min="0" max="12" value="5" />
+    </label>
+
+    <span id="cacheBadge" class="cache-badge">0 snapshots ready</span>
+    <span id="statusText" class="status-text">Upload an Excel file</span>
+    <button id="clearBtn" class="clear-button" type="button" disabled>Clear</button>
+    <button id="deleteCacheBtn" class="delete-cache-button" type="button">Delete cache</button>
+    <button id="helpBtn" type="button" aria-expanded="false" aria-controls="helpPanel">Help</button>
+  </header>
+
+  <main id="gallery" class="gallery">
+    <section class="empty-state">
+      <h1>Upload your on-field Excel sheet</h1>
+      <p>The server will render each URL once, cache a PNG snapshot, and reuse it permanently until the cache folder is deleted.</p>
+      <p>Expected column names include <code>onfield_link</code> or <code>onfiled_link</code>.</p>
+    </section>
+  </main>
+
+  <template id="cardTemplate">
+    <article class="record-card">
+      <div class="card-head">
+        <div class="record-meta">
+          <span class="record-number"></span>
+          <div>
+            <div class="record-title">Waiting to render</div>
+            <div class="record-url"></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <span class="render-state">Not rendered</span>
+          <a class="open-original" target="_blank" rel="noopener noreferrer">Open original</a>
+        </div>
+      </div>
+      <div class="snapshot-scroll">
+        <div class="placeholder">
+          <div class="spinner"></div>
+          <div class="placeholder-text">Waiting…</div>
+        </div>
+        <img class="snapshot" alt="Rendered on-field page snapshot" />
+      </div>
+    </article>
+  </template>
+
+  <aside id="helpPanel" class="help-panel" hidden>
+    <button id="closeHelpBtn" class="help-close" type="button" aria-label="Close help">Close</button>
+    <h2>How to use</h2>
+    <ol>
+      <li>Click <strong>Upload Excel</strong> and choose an Excel, CSV, or TSV file.</li>
+      <li>Choose the worksheet and the column containing the allowed page links.</li>
+      <li>Click <strong>Apply</strong>. The gallery rebuilds from that column without uploading again.</li>
+      <li>Use Previous/Next or scroll through the records. The first 10 records are queued, then the configured preload range is added when you approach the end of the loaded range.</li>
+    </ol>
+    <h3>Why snapshots?</h3>
+    <p>The server opens each page once in Playwright and saves a full-page PNG. The browser displays that PNG instead of keeping many live pages open, preventing iframe reloads and reducing browser memory use.</p>
+    <h3>API endpoints</h3>
+    <dl class="endpoint-list">
+      <dt><code>POST /api/upload</code></dt>
+      <dd>Uploads a workbook, reads its sheets and headers, and creates a session.</dd>
+      <dt><code>GET /api/session/:id</code></dt>
+      <dd>Returns the current session links and workbook metadata.</dd>
+      <dt><code>POST /api/session/:id/select</code></dt>
+      <dd>Reads links from a selected sheet and column without re-uploading the workbook.</dd>
+      <dt><code>GET /api/session/:id/render/:index</code></dt>
+      <dd>Returns metadata and the cached PNG URL for one record.</dd>
+      <dt><code>GET /api/cache/status</code></dt>
+      <dd>Returns the number of cached snapshots.</dd>
+      <dt><code>DELETE /api/cache</code></dt>
+      <dd>Deletes all generated PNG and metadata cache files so pages can be captured again.</dd>
+    </dl>
+    <p class="help-note">Only <code>ALLOWED_HOST</code> URLs are rendered. This protects the screenshot service from being used to request unrelated internal or external sites.</p>
+  </aside>
+
+  <script src="/app.js"></script>
+</body>
+</html>
